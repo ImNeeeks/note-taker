@@ -1,97 +1,34 @@
+
+// Importing the express module
 const express = require('express');
 const path = require('path');
+
+// Importing fs module to work with the file system
 const fs = require('fs');
-const uniqueIDGenerator = require('generate-unique-id');
 
-
+// Setting up the Express app
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 
+// Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// sends to landing page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html'))
-});
+// Importing route modules
+const apiRoutes = require('./routes/apiRoutes.js');
+const htmlRoutes = require('./routes/htmlRoutes.js');
 
-// enter into the main notes page
-app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/notes.html'))
-});
+// Use apiRoutes and htmlRoutes
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
-// sends infomation to json file
-app.get('/api/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/db/db.json'));
-    console.info("json file has been read")
-});
-
-// logic to save notes
-app.post('/api/notes', (req, res) => {
-    console.log("Initiating process to save new note");
-
-    // deconstruct the request
-    const { title, text } = req.body;
-
-    if (title && text) {
-        // creating a new ID each time this is called
-        const createID = uniqueIDGenerator({
-            length: 18
-        });
-        // take deconstructed request body and make it into an object
-        const newEntry = {
-            title,
-            text,
-            id: createID
-        };
-        // get the current data off of the db.json file
-        fs.readFile("./db/db.json", "utf8", (err, data) => {
-            if (err) {
-                console.error(err);
-            } else {
-                // parse the data from db.json, and add the new note object to it
-                const currentReviews = JSON.parse(data);
-                currentReviews.push(newEntry);
-                fs.writeFile("./db/db.json", JSON.stringify(currentReviews, null, 1), (error) => {
-                    error ? console.error(error) : console.log("Note Saved Successfully!")
-                });
-            }
-        });
-        res.send(newEntry);
-    } else {
-        console.log("Error occurred while trying to save note. Please ensure note has a title and text");
-        res.status(500)
-    }
-
-});
-
-// --------- Attempt to start the DELETE functionality - not finished -----------
-// app.delete('api/notes/:id', (req, res) => {
-//     const requestedID = req.params.id;
-//     fs.readFile("./db/db.json", "utf8", (err, data) => {
-//         if (err) {
-//             console.error(err);
-//         } else {
-//             const currentReviews = JSON.parse(data);
-//             const reviewsToWrite = [];
-//             for (let i = 0; i < currentReviews.length; i++) {
-//                 if (requestedID !== currentReviews[i].id) {
-//                     reviewsToWrite.push(currentReviews[i])
-//                 };
-//             };
-//             fs.writeFile("./db/db.json", JSON.stringify(reviewsToWrite, null, 1), (error) => {
-//                 error ? console.error(error) : console.log("Note Deleted Successfully!")
-//             });
-//         };
-//     });
-// })
-
-// Wildcard route to handle all other requests
+// If no matching route is found, default to the home page
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html'))
+  res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
+// Starts the server to begin listening
 app.listen(PORT, () => {
-    console.log(`Server is up and running on ${PORT}`)
+  console.log(`Note Taker app is listening on PORT: ${PORT}`);
 });
