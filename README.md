@@ -1,6 +1,3 @@
-# Challenge-Week-11
-A Note Taker application that can be used to write and save notes. This application will use an Express.js back end and will save and retrieve note data from a JSON file.
-
 # Note Taker Application
 
 ## Description
@@ -35,6 +32,8 @@ To run the Note Taker application locally, you'll need to have Node.js installed
 
 After installation, open your browser and go to `http://localhost:3001` to start using the Note Taker. The homepage presents you with a simple and clear option to go to the notes page where you can manage your notes.
 
+[Deployed Link](https://note-taker-fg84.onrender.com/)
+
 ## Contributing
 
 N/A
@@ -49,7 +48,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Demo
 
-For a live demo of the application, visit the following link: [Note Taker Live Demo](#) (You'll need to replace this with the actual link to your live app, if available)
+N/A
 
 ## Screenshots
 
